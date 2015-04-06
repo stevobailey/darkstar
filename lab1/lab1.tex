@@ -1,0 +1,223 @@
+\title{Exploring Digital Sampling, Fourier Transforms, and Sideband Mixers}
+\date{\today}
+\author{Stevo Bailey}
+
+\documentclass[12pt]{article}
+
+\usepackage[english]{babel}
+\usepackage[utf8x]{inputenc}
+\usepackage{amsmath}
+\usepackage{graphicx}
+\usepackage{titling}
+\usepackage{caption}
+\usepackage{subcaption}
+%\usepackage{hyperref}
+\usepackage{color}
+\usepackage[normalem]{ulem}
+\usepackage{titling}
+
+\pretitle{\begin{center}\Huge\bfseries}
+\posttitle{\par\end{center}\vskip 0.5em}
+\preauthor{\begin{center}\Large}
+\postauthor{\end{center}}
+\predate{\par\large\centering}
+\postdate{\par}
+
+
+\usepackage{epstopdf}
+\graphicspath{{./figures/}}
+\DeclareGraphicsExtensions{.eps,.png}
+
+
+\newcommand{\degree}{\ensuremath{^\circ} }
+
+\begin{document}
+\maketitle
+
+\section{Introduction}
+The first radio astronomy lab introduces a number of concepts, including the hardware side of radio signal acquisition, sampling theory and the Nyquist criterion, Fourier analysis and the Fourier transform, mixing, IDL, and \LaTeX.
+This lab report covers most of these goals, with experience in \LaTeX gained from simply writing the report.
+The goals were to familiarize the students with the concepts through hands-on analysis in the radio astronomy lab.
+Frequency generators, an oscilloscope, and a PicoScope were used to generate and observe sinusoidal signals.
+Power splitters and ZAD-1 mixers allowed for real-time signal modulation.
+Once data were generated, IDL was used to collect the data, post-process it, and plot it.
+The post-processing included testing the Nyquist criterion, exploring the DFT and FFT, comparing time series data and frequency data, and performing Fourier filtering.
+Finally, the results were summarized in this report. 
+
+
+
+\section{Nyquist Sampling and Aliasing}
+The goal of the first experiment was to explore the Nyquist criterion.
+The Nyquist criterion states that when digitally sampling a signal, perfect reconstruction is possible by sampling at greater than or equal to twice the maximum frequency present in the signal.
+Sampling faster gives no extra information, and thus wastes space.
+Sampling slower does not guarantee perfect reconstruction, and aliasing effects occur.
+The following experiment illustrates this.
+
+We used a PicoScope to digitally sample the output of a function generator at 6.25 MHz, also known as $\nu_{smpl}$.
+We set the function generator to produce signals at integer tenths of the sampling frequency, so 
+\begin{equation}
+\nu_{sig} = (0.1, 0.2, 0.3, ..., 0.9, 1.0)\nu_{smpl}.
+\end{equation}
+Finally, we took one more digital sample with the signal frequency much bigger than the sampling frequency, specifically 82 times larger.
+According to the Nyquist criterion, we expected to see correct spectra for $\nu_{sig} \leq 0.5\nu_{smpl}$.
+Otherwise, the signal was under-sampled, so we expected to see aliasing frequencies.
+
+The aliasing effect can even be seen in the time domain.
+Figure~\ref{fig:nyquist_time1} shows time-domain plots for a subset of the sampled frequencies.
+Aliasing produces frequencies which fold back away from the Nyquist frequency, meaning $\nu_{sig}=0.4\nu_{smpl}$ has the same frequency components as $\nu_{sig}=0.6\nu_{smpl}$.
+Time-domain signals with similar expected frequency spectra are plotted next to each to show this effect.
+Note when the sampled signal is exactly half the sampling frequency, the same two points are sampled repeatedly, as expected.
+
+\begin{figure}
+\centering
+\includegraphics[width=0.95\linewidth]{nyquist_time1}
+\caption{Time-domain plots of signals at integer tenths of the sampling frequency.}
+\label{fig:nyquist_time1}
+\end{figure}
+
+The frequency spectra, obtained by the DFT function in IDL, show this aliasing more concretely.
+Figure~\ref{fig:nyquist_freq1} again shows the signals paired up the same way as in Figure~\ref{fig:nyquist_time1}.
+The largest frequency components in each pair match.
+When $\nu_{sig}=0.5\nu_{smpl}$, the dominant frequency lies directly at the maximum frequency given by the DFT.
+The final two sampled signals are shown in Figure~\ref{fig:nyquist_freq2}.
+When $\nu_{sig}=\nu_{smpl}$, the dominant frequency is zero, since we sample the same value within a period each time.
+When $\nu_{sig}\gg\nu_{smpl}$, aliasing has folded back the dominant frequency to some value within the sampling range.
+
+
+\begin{figure}
+\centering
+\includegraphics[width=0.95\linewidth]{nyquist_freq1}
+\caption{Frequency-domain plots of signals at integer tenths of the sampling frequency.}
+\label{fig:nyquist_freq1}
+\end{figure}
+
+\begin{figure}
+\centering
+\includegraphics[width=0.45\linewidth]{nyquist_freq2}
+\caption{Frequency-domain plots of the other two sampled signals.}
+\label{fig:nyquist_freq2}
+\end{figure}
+
+\section{DFT vs. FFT}
+
+Previous spectra were calculated using the DFT, which takes quite some time for large datasets.
+For each frequency point, the DFT integrates (or sums) all datapoints.
+Since there are N frequencies and N datapoints, the computation goes as $O(N^2)$.
+However, the fast Fourier transform (FFT) is exactly the same as the DFT, but takes advantage of redundancy and sparsity within the algorithm.
+Thus it achieves $O(N\log_2 N)$ complexity, saving significant computation time.
+When sampling N channels, the FFT produces N outputs at frequencies $0, \nu_{smpl}/N, 2\nu_{smpl}/N, ..., \nu_{smpl}$.
+Above $\nu_{smpl}/2$, the frequencies are really aliases, so $\nu_{smpl}/2+\epsilon=-\nu_{smpl}/2+\epsilon$, where $\epsilon$ is some value between 0 and $\nu_{smpl/2}$.
+
+\section{Spectral Leakage}
+Spectral leakage is a phenomenon that occurs because sampling occurs for a finite amount of time.
+This creates a window function, which when passed through a Fourier transform, produces spectral components not present in the signal. 
+To show this, we performed the DFT using smaller spectral bins than the usual $\nu_{smpl}/N$.
+Figure~\ref{fig:leakage} shows that lots of higher peaks appear when smaller spectral bins are used.
+In particular, near the origin, the terms around DC are much higher when the resolution is increased.
+This shows the spectral leakage, which can mask interesting data in that region.
+
+\begin{figure}
+\centering
+\includegraphics[width=0.45\linewidth]{leakage}
+\caption{Spectral leakage is evident by increasing the frequency resolution}
+\label{fig:leakage}
+\end{figure}
+
+
+\section{Double-Sideband Mixers}
+Mixers down-convert or up-convert signals from one frequency to another.
+For example, audio signals are up-converted from their nominal range (20 Hz to 20 kHz) to radio frequencies (hundreds of kHz) before broadcasting.
+High-frequency signals may be down-converted to lower frequencies for simpler processing and filtering.
+To accomplish this, mixers simply multiply the signal of interest (often called the RF) with some local sinusoid (called the local oscillator (LO) or intermediate frequency (IF)).
+This produces a new signal containing the sum and difference frequencies.
+Often this output is filtered and further processed for its particular interest.
+
+To explore double-sideband (DSB) mixers, we applied two signals similar in frequency to a ZAD-1 balanced mixer.
+We did this twice.
+First, we used $\nu_{LO}=$7 MHz and $\nu_{RF}=$7.2 MHz.
+We also tried $\nu_{LO}=$7 MHz and $\nu_{RF}=$6.8 MHz.
+Each time we sampled at 31.25 MHz.
+Power spectra of these two cases are shown in Figure~\ref{fig:dsb_power}.
+Here $\delta\nu$ is 0.2 MHz.
+The peak frequencies appear to be in the right places, but to make sure, Figures~\ref{fig:dsb_power_closeup1} and \ref{fig:dsb_power_closeup2} show the sum and difference frequencies up close.
+As expected, the 14.2 MHz peak is higher when $\nu_{RF}=$7.2 MHz, and the 13.8 MHz peak is higher when $\nu_{RF}=$6.8 MHz.
+The other peak in each one is also quite high, but this is due to aliasing.
+
+\begin{figure}[h]
+    \centering
+    \begin{subfigure}[b]{0.3\textwidth}
+        \includegraphics[width=1.09\linewidth]{dsb_power}
+        \caption{Full spectra}
+        \label{fig:dsb_power}
+    \end{subfigure}
+    \quad
+    \begin{subfigure}[b]{0.3\textwidth}
+        \includegraphics[width=\linewidth]{dsb_power_closeup1}
+        \caption{Close-up of DC}
+        \label{fig:dsb_power_closeup1}
+    \end{subfigure}
+    \begin{subfigure}[b]{0.3\textwidth}
+        \includegraphics[width=1.01\linewidth]{dsb_power_closeup2}
+        \caption{Close-up of 14 MHz}
+        \label{fig:dsb_power_closeup2}
+    \end{subfigure}
+    \caption{Power spectra for two RF frequencies.}
+\end{figure}
+
+As mentioned earlier, it is sometimes useful to filter the output signal and obtain only the sum or difference component.
+To demonstrate this, we used Fourier filtering, which involves setting desired spectral frequencies to zero, then taking the inverse Fourier transform to recreate the signal.
+We used a low-pass Fourier filtering technique to obtain just the difference signal.
+The result, in Figure~\ref{fig:filter}, show that the high-frequency component of the time-domain signal clearly disappears, as expected.
+The low-frequency component looks the same as before.
+
+\begin{figure}
+\centering
+\includegraphics[width=0.95\linewidth]{filter}
+\caption{Demonstrating the Fourier low-pass filtering technique.}
+\label{fig:filter}
+\end{figure}
+
+\section{Sideband-Separating Mixers}
+All previous DSB plots show perfect frequency-domain symmetry around the origin.
+This results from taking the Fourier transform of a purely real signal.
+However, these symmetric sidebands are really some combination of the RF signals above and below the LO sidebands. 
+Ideally we would like to distinguish the sidebands.
+We can accomplish this by introducing an imaginary signal into the Fourier transform, which consists of a 90\degree phase shift of the LO.
+A 90\degree shift corresponds to a delay of $\lambda/4$, which we achieved by using a wire of appropriate length.
+We verified the phase shift by measuring the signal offset on the oscilloscope.
+
+For this experiment we chose frequencies $\nu_{LO}=$10.5~MHz and $\nu_{RF}=$10.1~MHz and 10.9~MHz, and $\nu_{smpl}=$62.5~MHz.
+The delayed signal was used as the imaginary values of the complex FFT input signal.
+Figure~\ref{fig:ssbshort} shows that no phase delay produces the typical double-sideband mixer result.
+Each sideband looks equivalent.
+However, as seen in Figure~\ref{fig:ssb}, adding a 90\degree phase delay allows us to distinguish the signal sidebands.
+This is most evident around the origin, where the difference frequency appears.
+When $\delta\nu$ is positive (the top plot in Figure~\ref{fig:ssb}), the +4~MHz frequency has more power.
+But when $\delta\nu$ is negative (the bottom plot in Figure~\ref{fig:ssb}), the -4~MHz frequency has more power.
+
+\begin{figure}
+\centering
+\includegraphics[width=0.85\linewidth]{ssbshortplots}
+\caption{Results of a sideband-separating mixer when no phase delay is added}
+\label{fig:ssbshort}
+\end{figure}
+
+\begin{figure}
+\centering
+\includegraphics[width=0.85\linewidth]{ssbplots}
+\caption{Results of a sideband-separating mixer when a 90\degree phase delay is added}
+\label{fig:ssb}
+\end{figure}
+
+\section{Conclusion}
+This report explored a range of concepts.
+These include the Nyquist criterion, sampling theory, and mixing for frequency conversion.
+Sampling a signal at a frequency less than the maximum signal frequency produces imperfect digital reconstruction and aliasing.
+The DFT and FFT perform exactly the same computation for powers-of-two datapoints, but the FFT reduces computational complexity significantly.
+Digital sampling in general produces spectral leakage (aliasing), and digital sampling over a finite time frame produces undesirable side lobes (spectral leakage).
+Frequency conversion is useful for up-converting or down-converting a signal to some desired frequency, but it must be done with care.
+The two sidebands tend to merge together unless a sideband-separating mixer and FFT are used.
+These well-known results were explored in this report, but in the future, it will be important to remember these concepts when exploring actual astronomy data.
+
+
+\enddocument

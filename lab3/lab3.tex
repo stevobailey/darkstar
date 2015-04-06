@@ -1,0 +1,94 @@
+\title{Radio Interferometry at X Band}
+\date{\today}
+\author{Stevo Bailey}
+
+\documentclass[12pt]{article}
+
+\usepackage[english]{babel}
+\usepackage[utf8x]{inputenc}
+\usepackage{amsmath}
+\usepackage{graphicx}
+\usepackage{titling}
+\usepackage{caption}
+\usepackage{subcaption}
+%\usepackage{hyperref}
+\usepackage{color}
+\usepackage[normalem]{ulem}
+\usepackage{titling}
+
+\pretitle{\begin{center}\Huge\bfseries}
+\posttitle{\par\end{center}\vskip 0.5em}
+\preauthor{\begin{center}\Large}
+\postauthor{\end{center}}
+\predate{\par\large\centering}
+\postdate{\par}
+
+
+\usepackage{epstopdf}
+\graphicspath{{./figures/}}
+\DeclareGraphicsExtensions{.eps,.png,.pdf}
+
+
+\newcommand{\degree}{\ensuremath{^\circ} }
+
+\begin{document}
+\maketitle
+
+\section{Introduction}
+This lab introduces interferometry as a way of measuring declinations of point sources and widths of extended sources.
+Interferometry uses multiple dishes to produce an interference pattern, or ``giant sine wave in the sky".
+The sine wave's properties depend on the declination, signal wavelength, array baseline, object brightness, and time (hour angle).
+Using interferometry measurements and least-squares fitting, accurate source properties can be determined.
+
+
+
+\section{Measurement Setup}
+Before taking interferometry data, a script was written to track an object in the sky.
+The script either uses the IDL procedures \texttt{isun} or \texttt{imoon} to calculate an altitude and azimuth, or it manually calculates it from known right ascension and declination values.
+Right ascension and declination values come from the J2000 equinox, which is a consistent set of benchmarks pegged to the year 2000 for a number of sources.
+These values are precessed to the current equinox, then converted to local altitude and azimuth values using the local sidereal time (LST) and Campbell Hall's latitude and longitude.
+The script updates the values every 10 seconds, using the \texttt{point2} command to set the dish orientations.
+It also re-calibrates the dishes about every hour using the \texttt{homer} command, in case the dishes lose alignment.
+
+The script was tested on the Sun.
+Verification was done by both visual confirmation and data collection.
+To visually confirm alignment, it was noted that the feed shadow should line up with the center of the dish.
+In reality, it was close, but not exactly on the center.
+The shadows for each dish were approximately three centimeters away from the center at most.
+Assuming the feed is one meter from the dish, this means the dishes are about 1.7\degree off from the desired position.
+For extended sources, this offset reduces the fringe amplitude but otherwise has no large effect.
+For point sources, this offset reduces the chances of successfully pointing at the object, possibly preventing any measurement of the object.
+Also, it was noted that wind atop Campbell Hall shakes the dishes, moving them by several degrees or more.
+
+
+\section{Point Source}
+\section{Sun and Moon}
+
+\subsection{Signal Quantization}
+
+%% subfigure:
+%\begin{figure}[h]
+%    \centering
+%    \begin{subfigure}[b]{0.44\textwidth}
+%        \includegraphics[width=1.09\linewidth]{1v_hist}
+%        \caption{Max voltage of 1 V}
+%        \label{fig:1vhist}
+%    \end{subfigure}
+%    \quad
+%    \begin{subfigure}[b]{0.46\textwidth}
+%        \includegraphics[width=\linewidth]{100mv_hist}
+%        \caption{Max voltage of 100 mV}
+%        \label{fig:100mvhist}
+%    \end{subfigure}
+%    \caption{Voltage histograms showing quantization extent}
+%\end{figure}
+%
+%% Figure:
+%\begin{figure}
+%\centering
+%\includegraphics[width=0.75\linewidth]{raw_spectra}
+%\caption{Spectral averages and medians with the HI line placed in either the LSB or USB.}
+%\label{fig:rawspectra}
+%\end{figure}
+
+\enddocument
