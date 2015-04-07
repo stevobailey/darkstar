@@ -159,6 +159,46 @@ This closely matches the actual DFT results, which are shown in Figure~\ref{fig:
 \section{The Moon}
 
 
+Reasonable Moon fringe data were not collected by our group, so we borrowed data from team Badwolf.
+They collected data on March 17, using a first LO frequency of 11.7 GHz.
+Since the procedure is the same as that of the Sun, most steps will be omitted here.
+Figure~\ref{fig:moon_data} shows the time-series fringe data that were collected.
+Since the signal is weak and contains noise, the time-series does not look strongly sinusoidal.
+To find the declination, linear least-squares fitting on Equation~1 was done.
+The results are shown in Figure~\ref{fig:moon_fit}.
+A well-defined minimum appears, though it is shallower than the Sun's minimum.
+The minimum occurs at C = 3156, where C is given by
+\begin{equation}
+C = 2 \pi \left( \frac{B_y}{\lambda} \cos \delta \right).
+\end{equation}
+We expected the first bandpass filter to cut off frequencies below 10 GHz, but the Moon data give better results assuming the lower frequency is used.
+At 10 GHz, the expected declination is 8.60\degree, while the actual declination varied from 12.5\degree to 11\degree, a difference of about 3\degree.
+Next, the Fourier transform was taken to view the fringe spectrum.
+The expected frequency range was calculted using Equation~2 above and found to be 17.7 mHz to 25.3 mHz.
+Some large spectral components appear within that range, as seen in Figure~\ref{fig:moon_dft}.
+The rest might be hidden under noise.
+
+\begin{figure}
+\centering
+\includegraphics[width=\linewidth]{figures/moon_data.eps}
+\caption{Time-series fringe data of the Moon, collected March 17, 2015}
+\label{fig:moon_time}
+\end{figure}
+
+\begin{figure}
+\centering
+\includegraphics[width=\linewidth]{figures/moon_fit.eps}
+\caption{Linear least-squares fitting result on the Moon data}
+\label{fig:moon_fit}
+\end{figure}
+
+\begin{figure}
+\centering
+\includegraphics[width=\linewidth]{figures/moon_dft.eps}
+\caption{DFT of the Moon fringe data}
+\label{fig:moon_dft}
+\end{figure}
+
 
 
 \section{Point Source}
@@ -171,10 +211,7 @@ Since the signal is weak and contains noise, the time-series does not look stron
 To find the declination, linear least-squares fitting on Equation~1 was done.
 The results are shown in Figure~\ref{fig:m17_fit}.
 Note here the minimum is much shallower than before, suggesting the results may be inaccurate or due to noise.
-The minimum occurs at C = 3377.4, where C is given by
-\begin{equation}
-C = 2 \pi \left( \frac{B_y}{\lambda} \cos \delta \right).
-\end{equation}
+The minimum occurs at C = 3377.4, where C is given by Equation 3.
 For this C value, the declination is 37.84\degree, which is over 16\degree from the expected value of 16.17\degree.
 Again this suggests problems with the data.
 Next, the Fourier transform was taken to view the fringe spectrum.
