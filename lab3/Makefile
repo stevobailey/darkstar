@@ -20,8 +20,6 @@ bbl:
 
 all:
 	make pdf 
-	-make bbl
-	make pdf
 	make pdf
 
 .DEFAULT_GOAL := all
