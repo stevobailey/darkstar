@@ -77,7 +77,7 @@ For extended sources, this offset reduces the fringe amplitude but otherwise has
 For point sources, this offset reduces the chances of successfully pointing at the object, possibly preventing any measurement of the object.
 Also, it was noted that wind atop Campbell Hall shakes the dishes, moving them by several degrees or more.
 
-\section{Sun and Moon}
+\section{The Sun}
 
 Data from 2007 was used provided and used to sanity check collected data.
 After numerous attempts at collecting Sun data, only one measurement produced a reasonable fringe pattern.
@@ -156,10 +156,54 @@ This closely matches the actual DFT results, which are shown in Figure~\ref{fig:
 \label{fig:sundft}
 \end{figure}
 
+\section{The Moon}
+
+
+
 
 \section{Point Source}
 
-\subsection{Signal Quantization}
+Reasonable point source fringe data were not collected by our group, so we borrowed M17 data from team Badwolf.
+They collected data on March 8, using a first LO frequency of 11.7 GHz.
+Since the procedure is the same as that of the Sun and Moon, most steps will be omitted here.
+Figure~\ref{fig:m17_time} shows the time-series fringe data that were collected.
+Since the signal is weak and contains noise, the time-series does not look strongly sinusoidal.
+To find the declination, linear least-squares fitting on Equation~1 was done.
+The results are shown in Figure~\ref{fig:m17_fit}.
+Note here the minimum is much shallower than before, suggesting the results may be inaccurate or due to noise.
+The minimum occurs at C = 3377.4, where C is given by
+\begin{equation}
+C = 2 \pi \left( \frac{B_y}{\lambda} \cos \delta \right).
+\end{equation}
+For this C value, the declination is 37.84\degree, which is over 16\degree from the expected value of 16.17\degree.
+Again this suggests problems with the data.
+Next, the Fourier transform was taken to view the fringe spectrum.
+The expected frequency range was calculted using Equation~2 above and found to be 26.0 mHz to 47.5 mHz.
+However, the spectrum shown in Figure~\ref{fig:m17_dft} shows lots of low-frequency components, but nothing that resembles a fringe.
+This hints at more problems with the data.
+
+
+\begin{figure}
+\centering
+\includegraphics[width=\linewidth]{figures/m17_time.eps}
+\caption{Time-series fringe data of M17, collected March 8, 2015}
+\label{fig:m17_time}
+\end{figure}
+
+\begin{figure}
+\centering
+\includegraphics[width=\linewidth]{figures/m17_fit.eps}
+\caption{Linear least-squares fitting result on M17 data}
+\label{fig:m17_fit}
+\end{figure}
+
+\begin{figure}
+\centering
+\includegraphics[width=\linewidth]{figures/m17_dft.eps}
+\caption{DFT of the M17 fringe data}
+\label{fig:m17_dft}
+\end{figure}
+
 
 %% subfigure:
 %\begin{figure}[h]
