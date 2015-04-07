@@ -47,7 +47,7 @@ Before taking interferometry data, a script was written to track an object in th
 The script either uses the IDL procedures \texttt{isun} or \texttt{imoon} to calculate an altitude and azimuth, or it manually calculates it from known right ascension and declination values.
 Right ascension and declination values come from the J2000 equinox, which is a consistent set of benchmarks pegged to the year 2000 for a number of sources.
 These values are precessed to the current equinox, then converted to local altitude and azimuth values using the local sidereal time (LST) and Campbell Hall's latitude and longitude.
-The script updates the values every 10 seconds, using the \texttt{point2} command to set the dish orientations.
+The script updates the values every 10 seconds, using the \texttt{point2} command to set the orientation of the dishes.
 It also re-calibrates the dishes about every hour using the \texttt{homer} command, in case the dishes lose alignment.
 
 The script was tested on the Sun.
@@ -60,9 +60,12 @@ For extended sources, this offset reduces the fringe amplitude but otherwise has
 For point sources, this offset reduces the chances of successfully pointing at the object, possibly preventing any measurement of the object.
 Also, it was noted that wind atop Campbell Hall shakes the dishes, moving them by several degrees or more.
 
+\section{Sun and Moon}
+The expected Sun fringe pattern was 
+After numerous attempts at collecting Sun data, only one measurement produced 
+
 
 \section{Point Source}
-\section{Sun and Moon}
 
 \subsection{Signal Quantization}
 
